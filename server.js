@@ -8,6 +8,8 @@ const cache = require('./util/apicache').middleware
 const { cookieToJson } = require('./util/index')
 const fileUpload = require('express-fileupload')
 const decode = require('safe-decode-uri-component')
+const serverless = require('serverless-http');
+const app = express();
 
 /**
  * The version check result.
@@ -320,3 +322,4 @@ module.exports = {
   serveNcmApi,
   getModulesDefinitions,
 }
+module.exports.handler = serverless(app);
