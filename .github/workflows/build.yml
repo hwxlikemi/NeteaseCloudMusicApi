@@ -3,7 +3,8 @@ name: Build Static Files
      on:
        push:
          branches:
-           - main  # 触发构建的分支
+           - main  # 推送代码时触发
+       workflow_dispatch:  # 手动触发
 
      jobs:
        build:
