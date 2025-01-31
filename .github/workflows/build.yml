@@ -1,39 +1,34 @@
-name: Build Static Site
+name: Build Static Files
 
-on:
-  push:
-    branches: [ "main" ]
-  workflow_dispatch:  # 允许手动触发
+     on:
+       push:
+         branches:
+           - main  # 触发构建的分支
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
+     jobs:
+       build:
+         runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
+         steps:
+           - name: Checkout code
+             uses: actions/checkout@v3
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
+           - name: Set up Node.js
+             uses: actions/setup-node@v3
+             with:
+               node-version: 16  # 使用 Node.js 16
 
-      - name: Install Dependencies
-        run: npm install
+           - name: Install dependencies
+             run: npm install
 
-      - name: Run API and Generate Data
-        run: |
-          node app.js &
-          sleep 5 # 等待 API 启动
-          node scripts/generate-static.js # 生成静态文件
+           - name: Build static files
+             run: |
+               mkdir -p public/api
+               echo '{"result": "search data"}' > public/api/search.json
+               echo '{"result": "song data"}' > public/api/song.json
 
-      - name: Compress Static Files
-        run: |
-          mkdir -p dist
-          tar -czvf dist/static-site.tar.gz index.html static/
-
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: static-site
-          path: dist/static-site.tar.gz
+           - name: Upload artifacts
+             uses: actions/upload-artifact@v3
+             with:
+               name: static-files
+               path: public
