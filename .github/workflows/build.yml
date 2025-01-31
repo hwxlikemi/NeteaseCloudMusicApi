@@ -1,9 +1,8 @@
-name: Build Static Files
+name: Build Static Site
 
 on:
   push:
-    branches: [ "main" ]  # 监听 main 分支的推送
-  workflow_dispatch:      # 允许手动触发
+    branches: [ "main" ]
 
 jobs:
   build:
@@ -13,28 +12,27 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      # 安装依赖（例如 Node.js 项目）
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'  # 根据项目需求调整版本
+          node-version: '20'
 
       - name: Install Dependencies
-        run: npm install      # 如果是 Python 项目，改为 pip install -r requirements.txt
+        run: npm install
 
-      # 构建静态文件（例如 npm run build）
-      - name: Build Project
-        run: npm run build    # 替换为你的构建命令（如 `yarn build` 或 `make`）
-
-      # 压缩构建产物
-      - name: Compress Build Artifacts
+      - name: Run API and Generate Data
         run: |
-          mkdir -p dist_compressed
-          tar -czvf dist_compressed/build.tar.gz -C dist .  # 替换 dist 为你的构建输出目录
+          node app.js &
+          sleep 5 # 等待 API 启动
+          node scripts/generate-static.js # 生成静态文件
 
-      # 上传压缩包为 Artifact
+      - name: Compress Static Files
+        run: |
+          mkdir -p dist
+          tar -czvf dist/static-site.tar.gz index.html static/
+
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: build-artifact
-          path: dist_compressed/build.tar.gz
+          name: static-site
+          path: dist/static-site.tar.gz
