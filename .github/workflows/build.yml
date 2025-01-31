@@ -1,35 +1,35 @@
-name: Build Static Files  # 工作流名称
+name: Build Static Files
 
-on:
-  push:
-    branches:
-      - main  # 推送代码时触发
-  workflow_dispatch:  # 手动触发
+     on:
+       push:
+         branches:
+           - main  # 推送代码时触发
+       workflow_dispatch:  # 手动触发
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
+     jobs:
+       build:
+         runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+         steps:
+           - name: Checkout code
+             uses: actions/checkout@v3
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 16  # 使用 Node.js 16
+           - name: Set up Node.js
+             uses: actions/setup-node@v3
+             with:
+               node-version: 16  # 使用 Node.js 16
 
-      - name: Install dependencies
-        run: npm install
+           - name: Install dependencies
+             run: npm install
 
-      - name: Build static files
-        run: |
-          mkdir -p public/api
-          echo '{"result": "search data"}' > public/api/search.json
-          echo '{"result": "song data"}' > public/api/song.json
+           - name: Build static files
+             run: |
+               mkdir -p public/api
+               echo '{"result": "search data"}' > public/api/search.json
+               echo '{"result": "song data"}' > public/api/song.json
 
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: static-files
-          path: public
+           - name: Upload artifacts
+             uses: actions/upload-artifact@v4  # 使用 v4 版本
+             with:
+               name: static-files
+               path: public
